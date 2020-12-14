@@ -47,7 +47,6 @@ class ApiCaller:
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    # ac = ApiCaller(email="ivan@admin.com", passw="wingchun99")
     ac = ApiCaller(email=EMAIL, passw=PASS)
     if args.add:
         ac.add_info()
