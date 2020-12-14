@@ -2,7 +2,6 @@ import requests
 import argparse
 from config import EMAIL, PASS
 
-print(EMAIL, PASS)
 parser = argparse.ArgumentParser()
 parser.add_argument("-a", "--add", help="Add some information", action="store_true")
 parser.add_argument("-l", "--listinfo", help="List all informations", action="store_true")
