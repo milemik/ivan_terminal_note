@@ -14,13 +14,13 @@ class ApiCaller:
     def __init__(self, email, passw):
         self.email = email
         self.passw = passw
-        # self.base_url = "https://questions-api-ivan.herokuapp.com/"
-        self.base_url = "http://localhost:8000/"
+        self.base_url = "https://questions-api-ivan.herokuapp.com/"
+        # self.base_url = "http://localhost:8000/"
 
     def get_token(self):
         url = self.base_url + "users/api-token-auth/"
-        # response = requests.post(url, data={"username": self.email, "password": self.passw})
-        response = requests.post(url, data={"username": "admin@admin.com", "password": "django123"})
+        response = requests.post(url, data={"username": self.email, "password": self.passw})
+        # response = requests.post(url, data={"username": "admin@admin.com", "password": "django123"})
         if "token" not in response.json():
             raise ValueError(f"CREDIDENTIALS {self.email} ARE NOT VALID")
         auth_token = response.json()["token"]
