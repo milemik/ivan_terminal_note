@@ -6,7 +6,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-a", "--add", help="Add some information", action="store_true")
 parser.add_argument("-l", "--listinfo", help="List all informations", action="store_true")
 parser.add_argument("-t", "--gettoken", help="Get token", action="store_true")
-
+parser.add_argument("-d", "--delete", help="Delete information", action="store_true")
 
 
 class ApiCaller:
@@ -14,12 +14,13 @@ class ApiCaller:
     def __init__(self, email, passw):
         self.email = email
         self.passw = passw
-        self.base_url = "https://questions-api-ivan.herokuapp.com/"
-        # self.base_url = "http://localhost:8000/"
+        # self.base_url = "https://questions-api-ivan.herokuapp.com/"
+        self.base_url = "http://localhost:8000/"
 
     def get_token(self):
         url = self.base_url + "users/api-token-auth/"
-        response = requests.post(url, data={"username": self.email, "password": self.passw})
+        # response = requests.post(url, data={"username": self.email, "password": self.passw})
+        response = requests.post(url, data={"username": "admin@admin.com", "password": "django123"})
         if "token" not in response.json():
             raise ValueError(f"CREDIDENTIALS {self.email} ARE NOT VALID")
         auth_token = response.json()["token"]
@@ -32,7 +33,7 @@ class ApiCaller:
         description = input("Please enter a description for your info\n")
         url = self.base_url + "info/"
         response = requests.post(url, headers=headers, data={"title": title, "description": description})
-        print(response)
+        print(response.json())
         return response.status_code
 
     def list_info(self):
@@ -40,8 +41,23 @@ class ApiCaller:
         headers = {"Authorization": f"Token {token}"}
         url = self.base_url + "info/"
         response = requests.get(url, headers=headers)
-        print(response.json())
+        data = response.json()
+        for d in data:
+            print(f"ID:{d['id']}\nTITLE:{d['title']}\nDESCRIPTION:{d['description']}\nDATE:{d['date']}")
+            print(10 * "==")
         return response
+    
+    def delete_info(self):
+        info_id = input("Please enter ID of the info you want to delete\n")
+        token = self.get_token()
+        headers = {"Authorization": f"Token {token}"}
+        url = self.base_url + f"info/{info_id}/"
+        response = requests.delete(url, headers=headers)
+        if response.status_code == 204:
+            print("Information deleted")
+        else:
+            print(response)
+        return response.status_code
 
 
 if __name__ == "__main__":
@@ -51,6 +67,8 @@ if __name__ == "__main__":
         ac.add_info()
     elif args.listinfo:
         ac.list_info()
+    elif args.delete:
+        ac.delete_info()
     else:
         print("Please enter some argument, use -h for help")
 
