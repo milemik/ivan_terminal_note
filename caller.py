@@ -1,6 +1,6 @@
 import requests
 import argparse
-from .config import EMAIL, PASS
+from config import EMAIL, PASS
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-a", "--add", help="Add some information", action="store_true")
