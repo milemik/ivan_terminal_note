@@ -1,12 +1,14 @@
 import requests
 import argparse
 from config import EMAIL, PASS
+from colors import bcolors
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-a", "--add", help="Add some information", action="store_true")
 parser.add_argument("-l", "--listinfo", help="List all informations", action="store_true")
 parser.add_argument("-t", "--gettoken", help="Get token", action="store_true")
 parser.add_argument("-d", "--delete", help="Delete information", action="store_true")
+parser.add_argument("-f", "--finish", help="Mark task as finished", action="store_true")
 
 
 class ApiCaller:
@@ -43,7 +45,10 @@ class ApiCaller:
         response = requests.get(url, headers=headers)
         data = response.json()
         for d in data:
-            print(f"ID:{d['id']}\nTITLE:{d['title']}\nDESCRIPTION:{d['description']}\nDATE:{d['date']}")
+            finish = f"{bcolors.WARNING}NOT FINISHED YET{bcolors.ENDC}"
+            if d['finished']:
+                finish = f"{bcolors.FAIL}FINISHED{bcolors.ENDC}"
+            print(f"ID:{d['id']}\nTITLE:{bcolors.BOLD}{d['title']}{bcolors.ENDC}\nDESCRIPTION:{d['description']}\nDATE:{d['date']}\nFINISHED:{finish}")
             print(10 * "==")
         return response
     
@@ -59,6 +64,19 @@ class ApiCaller:
             print(response)
         return response.status_code
 
+    def finish_info(self):
+        info_id = input("Please enter ID of the info you finished\n")
+        token = self.get_token()
+        headers = {"Authorization": f"Token {token}"}
+        url = self.base_url + f"info/{info_id}/finish/"
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            print(f"Task with ID: {info_id} marked as FINISHED")
+        else:
+            print(response)
+        return response.status_code
+
+
 
 if __name__ == "__main__":
     args = parser.parse_args()
@@ -69,6 +87,8 @@ if __name__ == "__main__":
         ac.list_info()
     elif args.delete:
         ac.delete_info()
+    elif args.finish:
+        ac.finish_info()
     else:
         print("Please enter some argument, use -h for help")
 
