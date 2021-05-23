@@ -1,7 +1,7 @@
 import requests
 import argparse
-from config import EMAIL, PASS
-from colors import bcolors
+from .config import EMAIL, PASS
+from .colors import bcolors
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-a", "--add", help="Add some information", action="store_true")
@@ -77,7 +77,6 @@ class ApiCaller:
         return response.status_code
 
 
-
 if __name__ == "__main__":
     args = parser.parse_args()
     ac = ApiCaller(email=EMAIL, passw=PASS)
@@ -91,4 +90,3 @@ if __name__ == "__main__":
         ac.finish_info()
     else:
         print("Please enter some argument, use -h for help")
-
